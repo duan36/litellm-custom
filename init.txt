@@ -40,6 +40,13 @@ git push -u origin custom-main
 
 # 修改、提交...
 
+# 开发
+python -m pip install -e ".[proxy]"
+litellm --model huggingface/bigcode/starcoder --host 127.0.0.1 --port 8000
+
+
+# 构建镜像
+docker build -t litellm-my:latest .
 
 # 后续同步稳定版更新
 git fetch upstream --tags
