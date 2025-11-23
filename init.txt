@@ -1,0 +1,51 @@
+# 1、在现有仓库中添加 litellm 子模块
+cd existing-repo
+git submodule add --depth 1 https://github.com/BerriAI/litellm.git litellm-custom/litellm
+git commit -m "feat: add litellm as submodule"
+
+# 初始化子模块
+git submodule update --init --recursive
+
+2、单独仓库
+git clone --depth=1 https://github.com/duan36/litellm-custom.git
+
+# 网不好老中断时：
+mkdir litellm-custom && cd litellm-custom
+git init
+git remote add origin https://github.com/duan36/litellm-custom.git
+git fetch --depth=1
+
+# 还不行时 代理：
+git clone --depth=1 https://githubproxy.cc/https://github.com/BerriAI/litellm.git litellm-custom
+git remote set-url origin https://duan36@github.com/duan36/litellm-custom.git
+
+# 综合验证命令
+git fsck --full && \
+echo "HEAD验证: $(git rev-parse HEAD)" && git log --oneline -3 && echo "✅ 仓库完整性验证通过"
+
+
+# 进入项目目录
+cd litellm-custom
+# 添加原始仓库为 upstream
+git remote add upstream https://github.com/BerriAI/litellm.git
+# 验证远程仓库设置
+git remote -v
+
+# 创建定制用主分支
+git fetch upstream tag v1.79.3-stable
+git checkout -b custom-main v1.79.3-stable
+
+# 提交到远程仓库
+git push -u origin custom-main
+
+# 修改、提交...
+
+
+# 后续同步稳定版更新
+git fetch upstream --tags
+git fetch upstream exp=v1.8-stable
+
+# 确保你在你的功能分支上
+git checkout custom-main
+# 合并上游的新的稳定版标签
+git merge exp=v1.8-stable
